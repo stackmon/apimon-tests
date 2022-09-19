@@ -42,7 +42,6 @@ Initially developed as part of the api-monitoring project, but separated for the
 ```
 clouds:
   otc:
-    profile: otc
     auth:
       auth_url: https://XXXXXXXXXXX
       project_name: XXXXXXXXXX
