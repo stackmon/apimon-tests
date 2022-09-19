@@ -1,0 +1,11 @@
+.ansible_*
+inv.log
+__pycache__
+*.retry
+playbooks/install/credentials/*
+*.swp
+*.swo
+**/*.swp
+**/*.swo
+*.egg
+opentelekomcloud_infra_apimon_tests.egg-info*
