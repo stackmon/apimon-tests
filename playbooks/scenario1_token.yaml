@@ -8,5 +8,6 @@
       script: get_token.py
       args:
         executable: python3
-
-      tags: 'service=identity'
+      tags:
+        - 'service=identity'
+        - 'metric=get_token'
