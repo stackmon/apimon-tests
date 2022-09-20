@@ -63,3 +63,5 @@ Every scenario is designed to deploy some resources, do some additional checks/o
 Under CentOS7 ansible is of a very old version with some other problems. One example is that some scenarios are trying to write file on the FS with SElinux enabled, but this requires selinux python package to be installed in the execution environment (`pip install selinux` works, but playbook fail with python internal exceptions). So for usage under CentOS7 it is recommended to disable SElinux or invest time in ensuring selinux python library work properly (not this project's fault).
 
 It might be also desired to enable task tracing (timing). This can be achieved by following https://docs.ansible.com/ansible/latest/plugins/callback/profile_tasks.html and enabling profile_tasks plugin in the ansible.cfg file in this repository.
+
+dummy change
