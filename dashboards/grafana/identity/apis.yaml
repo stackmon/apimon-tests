@@ -1,0 +1,13 @@
+---
+order: 10
+gridPos:
+  w: 24
+  h: 8
+options:
+  legend: {calcs: ["min", "mean", "max"], displayMode: "table", placement: "right"}
+  tooltip: {mode: "single", sort: "none"}
+targets:
+  - refId: "A"
+    target: "sortByName(groupByNodes(removeEmptySeries(stats.timers.openstack.api.$environment.$zone.identity.*.*.*.mean, 0.01), 'sum', 8, 7, 9), true)"
+title: "API calls duration"
+type: "timeseries"
