@@ -7,7 +7,12 @@
     prefix: scenario4-
   tasks:
     - set_fact:
-        prefix: "{{ (prefix + ( lookup('env', 'TASK_EXECUTOR_JOB_ID') | default(('%Y%m%d%H%M' | strftime(ansible_date_time.epoch)) + (99999999 | random | to_uuid | hash('md5'), true)) ) ) }}"
+        prefix: "{{ (prefix + (
+            lookup('env', 'TASK_EXECUTOR_JOB_ID') |
+            default(
+              [('%Y%m%d%H%M' | strftime), 99999999 | random | to_uuid | hash('md5')] | join('-'), true
+            )
+          ) ) }}"
     - set_fact:
         image_name: "{{ (prefix + '-test_image_apimon') }}"
 
