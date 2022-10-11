@@ -45,6 +45,7 @@
             state: present
             min_disk: 1
             timeout: 1200
+            is_protected: false
             filename: /tmp/ansible/images/cirros.img
           tags:
             - "metric=image_upload"
@@ -65,4 +66,5 @@
 
         - assert:
             that:
-              - image_state.openstack_image is defined
+              - image_state.images is defined
+              - image_state.images|length == 0
