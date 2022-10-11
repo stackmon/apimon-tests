@@ -17,6 +17,9 @@
         image_name: "{{ (prefix + '-test_image_apimon') }}"
 
     - block:
+        - assert:
+            that:
+              - fake is defined
 
         - name: List Images
           openstack.cloud.image_info:
