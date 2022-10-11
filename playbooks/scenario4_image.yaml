@@ -6,14 +6,11 @@
   vars:
     prefix: scenario4-
   tasks:
-    - set_fact:
-        prefix: "{{ (prefix + (
-            lookup('env', 'TASK_EXECUTOR_JOB_ID') |
-            default(
-              [('%Y%m%d%H%M' | strftime), 99999999 | random | to_uuid | hash('md5')] | join('-'), true
-            )
-          ) ) }}"
-    - set_fact:
+    - ansible.builtin.set_fact:
+        prefix: "{{ (prefix +
+            (lookup('env', 'TASK_EXECUTOR_JOB_ID') |
+            default([('%Y%m%d%H%M' | strftime), 99999999 | random | to_uuid | hash('md5')] | join('-'), true))) }}"
+    - ansible.builtin.set_fact:
         image_name: "{{ (prefix + '-test_image_apimon') }}"
 
     - block:
@@ -26,13 +23,13 @@
             image: "{{ generic_image_name | default('Standard_Fedora_36_latest') }}"
 
         - name: Create directory for images
-          file:
+          ansible.builtin.file:
             name: /tmp/ansible/images
             state: directory
             recurse: true
 
         - name: Download cirros image
-          get_url:
+          ansible.builtin.get_url:
             url: https://download.cirros-cloud.net/0.6.0/cirros-0.6.0-x86_64-disk.img
             dest: /tmp/ansible/images/cirros.img
             validate_certs: false
@@ -64,7 +61,7 @@
             image: "{{ image_name }}"
           register: image_state
 
-        - assert:
+        - ansible.builtin.assert:
             that:
               - image_state.images is defined
               - image_state.images|length == 0

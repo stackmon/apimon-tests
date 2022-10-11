@@ -2,7 +2,7 @@
 
 - name: Scenario 1 - obtain token
   hosts: localhost
-  ignore_errors: yes
+  ignore_errors: true
   tasks:
     - name: Get token
       script: get_token.py
