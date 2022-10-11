@@ -2,10 +2,10 @@
 inv.log
 __pycache__
 *.retry
-playbooks/install/credentials/*
 *.swp
 *.swo
 **/*.swp
 **/*.swo
+.eggs
 *.egg
-opentelekomcloud_infra_apimon_tests.egg-info*
+*egg-info
