@@ -1,0 +1,63 @@
+---
+# Scenario to test bascic Image functions
+#
+- name: Scenario 4 - Image
+  hosts: localhost
+  vars:
+    prefix: scenario4-
+  tasks:
+    - set_fact:
+        prefix: "{{ (prefix + ( lookup('env', 'TASK_EXECUTOR_JOB_ID') | default(('%Y%m%d%H%M' | strftime(ansible_date_time.epoch)) + (99999999 | random | to_uuid | hash('md5'), true)) ) ) }}"
+    - set_fact:
+        image_name: "{{ (prefix + '-test_image_apimon') }}"
+
+    - block:
+
+        - name: List Images
+          openstack.cloud.image_info:
+
+        - name: Get single Image
+          openstack.cloud.image_info:
+            image: "{{ generic_image_name | default('Standard_Fedora_36_latest') }}"
+
+        - name: Create directory for images
+          file:
+            name: /tmp/ansible/images
+            state: directory
+            recurse: true
+
+        - name: Download cirros image
+          get_url:
+            url: https://download.cirros-cloud.net/0.6.0/cirros-0.6.0-x86_64-disk.img
+            dest: /tmp/ansible/images/cirros.img
+            validate_certs: false
+
+        - name: Upload cirros image
+          openstack.cloud.image:
+            name: "{{ image_name }}"
+            container_format: bare
+            disk_format: qcow2
+            state: present
+            min_disk: 1
+            timeout: 1200
+            filename: /tmp/ansible/images/cirros.img
+          tags:
+            - "metric=image_upload"
+
+      always:
+
+        - name: Delete cirros image
+          openstack.cloud.image:
+            name: "{{ image_name }}"
+            state: absent
+          tags:
+            - "metric=image_delete"
+
+        - name: Verify image is deleted
+          openstack.cloud.image_info:
+            image: "{{ image_name }}"
+          register: image_state
+
+        - assert:
+            that:
+              - image_state.openstack_image is defined
