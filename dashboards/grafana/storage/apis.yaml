@@ -1,9 +1,9 @@
 ---
-order: 3
+order: 2
 gridPos:
   w: 24
   h: 8
-  y: 3
+  y: 2
 fieldConfig:
   defaults:
     custom:
@@ -15,6 +15,6 @@ options:
   tooltip: {mode: "single", sort: "none"}
 targets:
   - refId: "A"
-    target: "sortByName(groupByNodes(removeEmptySeries(stats.timers.openstack.api.$environment.$zone.identity.*.*.*.mean, 0.01), 'sum', 8, 7, 9), true)"
+    target: "sortByName(groupByNodes(removeEmptySeries(stats.timers.openstack.api.$environment.$zone.{object,object-store}.*.*.*.mean, 0.01), 'sum', 8, 7, 9), true)"
 title: "API calls duration"
 type: "timeseries"

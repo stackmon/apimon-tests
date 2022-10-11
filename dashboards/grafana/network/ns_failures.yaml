@@ -1,0 +1,21 @@
+---
+order: 4
+description: "NS Lookup failures from specific NS servers\n"
+gridPos:
+  w: 6
+  h: 6
+  x: 18
+  y: 4
+fieldConfig:
+      defaults:
+        custom:
+          drawStyle: "points"
+          pointSize: 6
+options:
+  legend: {displayMode: "list", placement: "bottom"}
+  tooltip: {mode: "single", sort: "none"}
+targets:
+  - refId: "A"
+    target: "aliasByNode(stats.counters.apimon.metric.$environment.$zone.dns.*.*.failed.count, 7, 8)"
+title: "NS Lookup Failures"
+type: "timeseries"

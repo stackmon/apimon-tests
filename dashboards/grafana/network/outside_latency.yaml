@@ -1,0 +1,21 @@
+---
+order: 6
+description: "Ping latency for outside world through NATGW and Shared SNAT\n"
+gridPos:
+  w: 18
+  h: 8
+  y: 6
+fieldConfig:
+      defaults:
+        custom:
+          fillOpacity: 10
+          spanNulls: 3600000
+          showPoints: "never"
+options:
+  legend: {calcs: ["lastNotNull"], displayMode: "table", placement: "right"}
+  tooltip: {mode: "single", sort: "none"}
+targets:
+  - refId: "A"
+    target: "groupByNodes(stats.timers.apimon.metric.$environment.$zone.ping.{natgw,snat}.*.mean, 'avg', 7)"
+title: "Outside NATGW/SNAT ping Latency"
+type: "timeseries"

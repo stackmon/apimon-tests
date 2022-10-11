@@ -1,0 +1,23 @@
+---
+order: 3
+gridPos:
+  w: 24
+  h: 9
+  y: 3
+bars: true
+fieldConfig:
+  defaults:
+    custom:
+      drawStyle: "bars"
+      fillOpacity: 10
+      spanNulls: 3600000
+      showPoints: "never"
+options:
+  legend: {displayMode: "list", placement: "bottom"}
+  tooltip: {mode: "single", sort: "none"}
+targets:
+  - refId: "A"
+    target: "maximumAbove(groupByNodes(exclude(stats.timers.openstack.api.$environment.$zone.*.*.*.{4*,5*}.count, '404|dns.GET.zone.400|dns.GET.zone_recordset.400'), 'sum', 6, 9), 0)"
+title: "Amount of errors"
+type: "timeseries"
+interval: "5m"

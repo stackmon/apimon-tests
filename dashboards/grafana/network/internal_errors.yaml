@@ -1,0 +1,21 @@
+---
+order: 5
+description: "Ping errors for hosts inside VPC/VPC peering using internal IP addresses\n"
+gridPos:
+  w: 6
+  h: 8
+  x: 18
+  y: 5
+fieldConfig:
+      defaults:
+        custom:
+          drawStyle: "points"
+          pointSize: 6
+options:
+  legend: {displayMode: "list", placement: "bottom"}
+  tooltip: {mode: "single", sort: "none"}
+targets:
+  - refId: "A"
+    target: "groupByNodes(stats.counters.apimon.metric.$environment.$zone.ping.{peering,vpc}.*.*.failed, 'sum', 7)"
+title: "Internal ping errors"
+type: "timeseries"

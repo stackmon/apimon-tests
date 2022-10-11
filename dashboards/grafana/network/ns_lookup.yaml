@@ -1,0 +1,21 @@
+---
+order: 4
+description: "NS Lookup from specific NS servers\n"
+gridPos:
+  w: 18
+  h: 6
+  y: 4
+fieldConfig:
+      defaults:
+        custom:
+          fillOpacity: 10
+          spanNulls: 3600000
+          showPoints: "never"
+options:
+  legend: {calcs: ["mean", "last", "max"], displayMode: "table", placement: "right"}
+  tooltip: {mode: "single", sort: "none"}
+targets:
+  - refId: "A"
+    target: "groupByNodes(stats.timers.apimon.metric.$environment.$zone.dns.*.*.mean, 'avg', 7, 8)"
+title: "NS Lookup"
+type: "timeseries"

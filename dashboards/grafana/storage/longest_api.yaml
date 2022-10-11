@@ -1,10 +1,10 @@
 ---
-order: 4
+order: 3
 description: "API calls which has occurences longer then 10s."
 gridPos:
   h: 8
   w: 24
-  y: 4
+  y: 3
 fieldConfig:
   defaults:
     custom:
@@ -16,6 +16,6 @@ options:
   tooltip: {"mode": "single", "sort": "none"}
 targets:
   - refId: "A"
-    target: "maximumAbove(groupByNodes(removeEmptySeries(stats.timers.openstack.api.$environment.$zone.identity.*.*.*.upper), 'sum', 8, 7, 9), 1000)"
+    target: "maximumAbove(groupByNodes(removeEmptySeries(stats.timers.openstack.api.$environment.$zone.{object,object-store}.*.*.*.upper), 'sum', 8, 7, 9), 10000)"
 title: "Highest API calls duration"
 type: "timeseries"

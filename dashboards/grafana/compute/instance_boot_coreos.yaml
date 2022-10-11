@@ -1,0 +1,21 @@
+---
+order: 3
+gridPos:
+  w: 12
+  h: 6
+  y: 3
+fieldConfig:
+  defaults:
+    custom:
+      fillOpacity: 10
+      spanNulls: 3600000
+      showPoints: "never"
+options:
+  legend: {displayMode: "list", placement: "bottom"}
+  tooltip: {mode: "single", sort: "none"}
+targets:
+  - refId: "A"
+    datasource: cloudmon
+    target: "groupByNode(stats.timers.apimon.metric.$environment.$zone.create_server_coreos.{default,eu*}.*.mean_90, 7, 'avg')"
+title: "Instance Boot duration (coreos)"
+type: "timeseries"

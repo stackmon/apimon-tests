@@ -1,0 +1,20 @@
+---
+order: 2
+gridPos:
+  w: 12
+  h: 6
+  y: 2
+fieldConfig:
+  defaults:
+    custom:
+      fillOpacity: 10
+      spanNulls: 3600000
+      showPoints: "never"
+options:
+  legend: {displayMode: "list", placement: "bottom"}
+  tooltip: {mode: "single", sort: "none"}
+targets:
+  - refId: "A"
+    target: "groupByNode(stats.timers.apimon.metric.$environment.$zone.create_server.{default,eu*}.*.mean_90, 7, 'avg')"
+title: "Instance Boot duration (Fedora33)"
+type: "timeseries"

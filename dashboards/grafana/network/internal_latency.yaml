@@ -1,0 +1,21 @@
+---
+order: 5
+description: "Ping latency for hosts inside VPC or through VPC Peering using internal IP addresses\n"
+gridPos:
+  w: 18
+  h: 8
+  y: 5
+fieldConfig:
+      defaults:
+        custom:
+          fillOpacity: 10
+          spanNulls: 3600000
+          showPoints: "never"
+options:
+  legend: {calcs: ["lastNotNull"], displayMode: "table", placement: "right"}
+  tooltip: {mode: "single", sort: "none"}
+targets:
+  - refId: "A"
+    target: "groupByNodes(stats.timers.apimon.metric.$environment.$zone.ping.{vpc,peering}.*.*.mean, 'avg', 9)"
+title: "Internal VPC/Peering Latency"
+type: "timeseries"

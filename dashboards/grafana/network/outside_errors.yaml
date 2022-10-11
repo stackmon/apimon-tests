@@ -1,0 +1,21 @@
+---
+order: 6
+description: "Outside ping errors. Single errors are not an problem indicator (pinging hosts in different countries).\n"
+gridPos:
+  w: 6
+  h: 8
+  x: 18
+  y: 6
+fieldConfig:
+      defaults:
+        custom:
+          drawStyle: "points"
+          pointSize: 6
+options:
+  legend: {displayMode: "list", placement: "bottom"}
+  tooltip: {mode: "single", sort: "none"}
+targets:
+  - refId: "A"
+    target: "groupByNodes(stats.counters.apimon.metric.$environment.$zone.ping.{natgw,snat}.*.failed, 'sum', 7)"
+title: "Outside ping errors"
+type: "timeseries"

@@ -1,0 +1,42 @@
+---
+order: 5
+datasource: apimon_db
+gridPos:
+  w: 24
+  h: 10
+  y: 5
+options:
+  showHeader: true
+fieldConfig:
+  overrides:
+    - matcher:
+        id: "byName"
+        options: "job_id"
+      properties:
+        - id: "links"
+          value:
+            - targetBlank: true
+              url: "${__value.raw}"
+targets:
+  - refId: "A"
+    datasource: apimon_db
+    format: "table"
+    metricColumn: "long_name"
+    rawSql: |
+      SELECT
+        result_task."timestamp" AS "time",
+        result_task.action AS "Action",
+        result_task.name AS "Name",
+        result_task.job_id AS "job_id",
+        result_task.result,
+        result_task.anonymized_response
+      FROM result_summary
+      INNER JOIN result_task on result_summary.job_id = result_task.job_id AND result_task.environment = result_summary.environment AND result_task.zone = result_summary.zone AND $__timeFilter(result_summary."timestamp") WHERE
+        $__timeFilter(result_task."timestamp") AND
+        result_task.environment = '$environment' AND
+        result_task.zone in ('$zone') AND
+        result_task.result = 3 AND
+        result_summary.result = 3
+      ORDER BY 1 DESC
+title: "Failures in Tasks"
+type: "table"

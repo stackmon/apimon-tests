@@ -4,7 +4,7 @@ datasource: apimon_db
 gridPos:
   w: 24
   h: 10
-  y: 7
+  y: 11
 options:
   showHeader: true
 fieldConfig:
