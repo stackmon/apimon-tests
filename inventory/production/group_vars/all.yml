@@ -1,6 +1,6 @@
 ---
 # flavor
-test_flavor: "SCS-2V:2:10"
+test_flavor: "SCS-2V:2:20"
 test_image: "Ubuntu 22.04"
 
 # cloud_name:
