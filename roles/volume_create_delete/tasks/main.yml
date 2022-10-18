@@ -1,0 +1,22 @@
+---
+# tasks file for roles/volume_create_delete
+
+- block:
+  - name: "Create Volume in {{ availability_zone }}"
+    openstack.cloud.volume:
+      state: present
+      availability_zone: "{{ availability_zone | default(omit) }}"
+      size: 10
+      display_name: "{{ volume_name }}"
+    tags:
+      - "metric=create_volume"
+    register: volume
+  
+  always:
+    - name: "Delete Volume"
+      openstack.cloud.volume:
+        state: absent
+        display_name: "{{ volume_name }}"
+      tags:
+        - "metric=delete_volume"
+        - "metric=delete_volume_{{ availability_zone }}"

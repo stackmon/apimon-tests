@@ -1,0 +1,233 @@
+---
+
+- name: Scenario 2 - basic compute functionality
+  hosts: localhost
+  vars:
+    prefix: scenario2-
+  tasks:
+    - set_fact:
+        prefix: "{{ (prefix + ( lookup('env', 'TASK_EXECUTOR_JOB_ID') | default(99999999 | random | to_uuid | hash('md5'), true) ) ) }}"
+
+    - set_fact:
+        test_server_fqdn: "{{ (prefix + '.host') }}"
+        test_security_group_name: "{{ (prefix + '-sg') }}"
+        test_keypair_name: "{{ (prefix + '-kp') }}"
+        test_network_name: "{{ ( prefix + '-net') }}"
+#        test_image: Standard_Fedora_35_latest
+
+    - name: Query specific flavor
+      openstack.cloud.compute_flavor_info:
+        name: "{{ test_flavor }}"
+      register: flavor_result
+
+    # using s2.medium.2 as fallback in case the flavor from inv is not available in the env
+    - set_fact:
+        test_flavor: s2.medium.2
+      when: flavor_result.openstack_flavors | length==0
+
+    - debug:
+        msg: "Using prefix {{ prefix }}"
+
+    - name: List Keypairs
+      script: list_keypairs.py
+      args:
+        executable: python3
+      tags: 'service=compute'
+
+    - name: Ensure .ssh exists
+      file:
+        path: "~/.ssh"
+        state: directory
+
+    - block:
+
+      - name: Create Keypair
+        include_role:
+          name: keypair
+        vars:
+          keypair_name: "{{ test_keypair_name }}"
+          state: "present"
+
+      - name: List Networks
+        openstack.cloud.networks_info:
+
+      - name: List Flavors
+        openstack.cloud.compute_flavor_info:
+
+      - name: List Subnets
+        openstack.cloud.subnets_info:
+
+      - name: List Routers
+        script: list_routers.py
+        args:
+          executable: python3
+        tags: 'service=network'
+
+      - name: Create VPC (Router + Net + Subnet)
+        include_role:
+          name: vpc
+        vars:
+          network_name: "{{ test_network_name }}"
+          state: "present"
+
+      - name: List SecurityGroups with Rules
+        script: list_security_groups.py
+        args:
+          executable: python3
+        tags: 'service=compute'
+
+      - name: Create SecurityGroup
+        openstack.cloud.security_group:
+          name: "{{ test_security_group_name }}"
+          description: Test Security group created by APImon
+
+      - name: Create SecurityGroupRule
+        openstack.cloud.security_group_rule:
+          security_group: "{{ test_security_group_name }}"
+          protocol: tcp
+          port_range_min: 22
+          port_range_max: 22
+          remote_ip_prefix: 0.0.0.0/0
+
+      - name: List Images
+        openstack.cloud.image_info:
+
+      - name: List Servers
+        openstack.cloud.server_info:
+
+      ############
+      - name: Create Server in default AZ
+        openstack.cloud.server:
+          auto_ip: false
+          name: "{{ test_server_fqdn }}"
+          image: "{{ test_image }}"
+          flavor: "{{ test_flavor }}"
+          key_name: "{{ test_keypair_name }}"
+          network: "{{ test_network_name }}"
+          security_groups: "{{ test_security_group_name }}"
+        tags:
+          - "metric=create_server"
+          - "az=default"
+        register: server
+
+      - name: get server id
+        set_fact:
+          server_id: "{{ server.id }}"
+
+      - name: Attach FIP
+        openstack.cloud.floating_ip:
+          server: "{{ server_id }}"
+        tags:
+          - "metric=create_server"
+          - "az=default"
+
+      - name: get server info
+        openstack.cloud.server_info:
+          server: "{{ server_id }}"
+        register: server
+        tags:
+          - "metric=create_server"
+          - "az=default"
+
+      - set_fact:
+          server_ip: "{{ server['openstack_servers'][0]['public_v4'] }}"
+        tags:
+          - "metric=create_server"
+          - "az=default"
+
+      - name: find servers by name
+        openstack.cloud.server_info:
+          server: "{{ test_server_fqdn }}"
+        register: servers
+        tags:
+          - "metric=create_server"
+          - "az=default"
+
+      - name: Debug server info
+        debug:
+          var: servers
+
+      # Wait for the server to really start and become accessible
+      - name: Wait for SSH port to become active
+        wait_for:
+          port: 22
+          host: "{{ server_ip }}"
+          timeout: 600
+        tags: ["az=default", "service=compute", "metric=create_server"]
+
+      - name: Try connecting
+        retries: 10
+        delay: 1
+        command: "ssh -o 'UserKnownHostsFile=/dev/null' -o 'StrictHostKeyChecking=no' {{ test_user }}@{{ server_ip }} -i ~/.ssh/{{ test_keypair_name }}.pem"
+        tags: ["az=default", "service=compute", "metric=create_server"]
+
+      ############
+      - name: Get Server metadata
+        script: "get_server_metadata.py {{ server_id }}"
+        args:
+          executable: python3
+        tags: 'service=compute'
+
+      - name: Modify metadata
+        openstack.cloud.server_metadata:
+          server: "{{ server_id }}"
+          state: present
+          meta:
+            meta_k1: v1
+            meta_k2: v2
+
+      - name: Delete metadata
+        openstack.cloud.server_metadata:
+          server: "{{ server_id }}"
+          state: absent
+          meta:
+            meta_k1:
+            meta_k2:
+
+              #- name: Set Tags on the Server
+              #  opentelekomcloud.cloud.tag:
+              #    server: "{{ server_id }}"
+              #    state: present
+              #    tags:
+              #      - tag1
+              #      - tag2
+              #    mode: set
+
+      - name: Delete SecurityGroupRule
+        openstack.cloud.security_group_rule:
+          state: "absent"
+          security_group: "{{ test_security_group_name }}"
+          protocol: tcp
+          port_range_min: 2208
+          port_range_max: 2209
+          remote_ip_prefix: 0.0.0.0/0
+
+      always:
+        - block:
+            - name: Delete server
+              openstack.cloud.server:
+                state: absent
+                name: "{{ server_id | default(test_server_fqdn) }}"
+                delete_fip: True
+              tags: ["metric=delete_server"]
+
+            - name: Delete SecurityGroup
+              openstack.cloud.security_group:
+                state: "absent"
+                name: "{{ test_security_group_name }}"
+
+            - name: Delete VPC
+              include_role:
+                name: vpc
+              vars:
+                state: absent
+                network_name: "{{ test_network_name }}"
+
+            - name: Delete Keypair
+              include_role:
+                name: keypair
+              vars:
+                keypair_name: "{{ test_keypair_name }}"
+                force_delete_key: true
+                state: "absent"
+          ignore_errors: true
