@@ -1,0 +1,52 @@
+---
+order: 3
+datasource: apimon_db
+gridPos:
+  w: 24
+  h: 8
+  y: 3
+options:
+  legend: {displayMode: "table", placement: "right"}
+  tooltip: {mode: "single", sort: "none"}
+  alertThreshold: true
+fieldConfig:
+  defaults:
+    custom:
+      drawStyle: "points"
+      pointSize: 4
+targets:
+  - format: time_series
+    metricColumn: name
+    queryType: randomWalk
+    rawQuery: false
+    rawSql: "SELECT\n  \"timestamp\" AS \"time\",\n  name AS metric,\n  result\n\
+      FROM result_summary\nWHERE\n  $__timeFilter(\"timestamp\") AND\n  environment\
+      \ = '$environment' AND\n  zone = '$zone'\nORDER BY 1,2"
+    refId: A
+    select:
+      - - params:
+            - result
+          type: column
+    table: result_summary
+    timeColumn: '"timestamp"'
+    timeColumnType: timestamp
+    where:
+      - name: $__timeFilter
+        params: []
+        type: macro
+      - datatype: varchar
+        name: ''
+        params:
+          - environment
+          - '='
+          - '''$environment'''
+        type: expression
+      - datatype: varchar
+        name: ''
+        params:
+          - zone
+          - '='
+          - '$zone'
+        type: expression
+title: "Test results"
+type: "timeseries"

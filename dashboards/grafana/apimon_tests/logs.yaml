@@ -1,0 +1,76 @@
+---
+order: 5
+datasource: apimon_db
+gridPos:
+  w: 24
+  h: 12
+  y: 5
+fieldConfig:
+  defaults:
+    custom:
+      displayMode: auto
+      filterable: false
+    thresholds:
+      mode: absolute
+      steps:
+        - color: green
+          value: null
+        - color: red
+          value: 1
+  overrides:
+    - matcher:
+        id: byName
+        options: job_id
+      properties:
+        - id: links
+          value:
+            - targetBlank: true
+              url: https://swift.eu-de.otc.t-systems.com/v1/AUTH_8deb45bad78e4dfc95223d819d0c3909/job_logs/${__data.fields.job_id}/job-output.txt
+    - matcher:
+        id: byName
+        options: result
+      properties:
+        - id: thresholds
+          value:
+            mode: absolute
+            steps:
+              - color: green
+                value: null
+              - color: red
+                value: 1
+        - id: mappings
+          value:
+            - from: ''
+              id: 1
+              text: Success
+              to: ''
+              type: 1
+              value: '0'
+            - from: ''
+              id: 2
+              text: Failed
+              to: ''
+              type: 1
+              value: '3'
+        - id: custom.displayMode
+          value: color-background
+    - matcher:
+        id: byName
+        options: duration
+      properties:
+        - id: unit
+          value: ms
+options:
+  showHeader: true
+targets:
+  - format: table
+    group: []
+    metricColumn: none
+    rawQuery: true
+    rawSql: "SELECT\n  \"timestamp\" AS \"time\",\n  \"name\",\n  \"job_id\",\n\
+      \  \"result\",\n  \"duration\"\nFROM result_summary\nWHERE\n  $__timeFilter(\"\
+      timestamp\") AND\n  environment = '$environment' AND\n  zone = $zone AND\n\
+      \  result = 3\nORDER BY 1 DESC"
+    refId: A
+title: "Test Logs"
+type: "table"

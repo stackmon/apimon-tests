@@ -1,0 +1,21 @@
+---
+order: 2
+gridPos:
+  w: 12
+  h: 8
+  x: 12
+  y: 2
+fieldConfig:
+  defaults:
+    custom:
+      drawStyle: "points"
+      pointSize: 6
+options:
+  legend: {calcs: [], displayMode: "table", placement: "right"}
+  tooltip: {mode: "single", sort: "none"}
+targets:
+  - refId: "A"
+    target: "maximumAbove(aliasByMetric(groupByNode(consolidateBy(exclude(stats.timers.openstack.api.$environment.$zone.*.*.*.{4*,5*}.count, '404|dns.GET.zone.400|dns.GET.zone_recordset.400'), 'sum'), 9, 'sum')), 0)"
+title: "Count of API Errors"
+description: "Bad responses (4*, 5*, excluding 404)"
+type: "timeseries"
