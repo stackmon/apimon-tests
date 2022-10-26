@@ -1,5 +1,6 @@
 ---
 roles:
 collections:
-  - name: openstack.cloud
-    version: 1.2.1
+  - name: https://opendev.org/openstack/ansible-collections-openstack
+    type: git
+    version: master

@@ -24,7 +24,7 @@ token = conn.identity.post(
             },
             "scope": {
                 "project": {
-                    "name": conn.auth['project_name'], 
+                    "name": conn.auth['project_name'],
                     "domain": {
                         "name": conn.auth['user_domain_name']
                     }
