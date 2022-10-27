@@ -1,12 +1,14 @@
 ---
-order: 3
+order: 4
 gridPos:
   w: 24
   h: 8
-  y: 3
+  y: 4
+bars: true
 fieldConfig:
   defaults:
     custom:
+      drawStyle: "bars"
       fillOpacity: 10
       spanNulls: 3600000
       showPoints: "never"
@@ -17,6 +19,6 @@ options:
   tooltip: {mode: "single", sort: "none"}
 targets:
   - refId: "A"
-    target: "sortByName(groupByNodes(removeEmptySeries(stats.timers.openstack.api.$environment.$zone.identity.*.*.*.mean, 0.01), 'sum', 8, 7, 9), true)"
-title: "API calls duration"
+    target: "groupByNode(consolidateBy(stats.timers.apimon.metric.$environment.$zone.create_volume_backup.{default}.passed.upper_90, 'sum'), 7, 'avg')"
+title: "Volume Backup creation duration"
 type: "timeseries"

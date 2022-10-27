@@ -1,0 +1,23 @@
+---
+order: 3
+description: "Curl like request latencies to the hosts in scenario30_domains.yaml\n"
+gridPos:
+  w: 18
+  h: 6
+  y: 3
+fieldConfig:
+  defaults:
+    custom:
+      fillOpacity: 10
+      spanNulls: 3600000
+      showPoints: "never"
+    unit: "ms"
+    decimals: 2
+options:
+  legend: {calcs: ["lastNotNull"], displayMode: "table", placement: "right"}
+  tooltip: {mode: "single", sort: "none"}
+targets:
+  - refId: "A"
+    target: "aliasByNode(stats.timers.apimon.metric.$environment.$zone.curl.*.{2*,3*}.mean, 5, 7)"
+title: "Domains curl Latency"
+type: "timeseries"

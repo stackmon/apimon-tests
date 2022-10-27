@@ -1,0 +1,26 @@
+---
+order: 2
+gridPos:
+  w: 12
+  h: 6
+  x: 12
+  y: 2
+fieldConfig:
+  defaults:
+    thresholds: {mode: "absolute", steps: [
+      {color: "green", value: null},
+      {color: "red", value: 100000000}
+      ]}
+    color:
+      mode: "thresholds"
+    max: 100
+    min: 0
+    noValue: "0"
+options:
+  legend: {calcs: ["min", "mean", "max"], displayMode: "table", placement: "right"}
+  tooltip: {mode: "single", sort: "none"}
+targets:
+  - refId: "A"
+    target: "aliasByMetric(summarize(groupByNode(stats.counters.apimon.metric.$environment.$zone.{create_server,create_server_coreos}.{default,eu*}.passed.count, 7, 'sum'), '1d', 'sum', false))"
+title: "SSH Successful Logins"
+type: "gauge"

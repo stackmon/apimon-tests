@@ -1,0 +1,23 @@
+---
+order: 9
+description: "API calls received error HTTP response code."
+gridPos:
+  w: 24
+  h: 8
+  y: 9
+bars: true
+fieldConfig:
+  defaults:
+    custom:
+      drawStyle: "bars"
+      fillOpacity: 10
+      spanNulls: 3600000
+      showPoints: "never"
+options:
+  legend: {calcs: ["count"], displayMode: "table", placement: "right"}
+  tooltip: {mode: "single", sort: "none"}
+targets:
+  - refId: "A"
+    target: "removeEmptySeries(aliasByMetric(consolidateBy(groupByNode(exclude(stats.timers.openstack.api.$environment.$zone.network.*.*.{4*,5*}.count, '404'), 9, 'sum'), 'sum')), 0.001)"
+title: "BAD calls"
+type: "timeseries"

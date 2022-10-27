@@ -1,0 +1,26 @@
+---
+order: 1
+gridPos:
+  w: 24
+  h: 16
+  y: 1
+fieldConfig:
+  defaults:
+    thresholds:
+      mode: "percentage"
+      steps: [
+        {color: "red", value: null},
+        {color: "yellow", value: 80},
+        {color: "green", value: 99}
+      ]
+    color:
+      mode: "thresholds"
+    noValue: "0"
+    unit: "percent"
+    min: 0
+    max: 100
+targets:
+  - refId: "A"
+    target: "aliasByMetric(summarize(groupByNode(applyByNode(stats.timers.openstack.api.$environment.$zone.*.*.*.*.count, 6, \"asPercent(sumSeries(%.*.*.{2*,3*,404}.count), sumSeries(%.*.*.*.count))\", \"%.pct\"), 6, 'avg'), '1hour', 'avg'))"
+title: "Endpoint status"
+type: "gauge"

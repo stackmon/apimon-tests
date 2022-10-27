@@ -1,0 +1,22 @@
+---
+order: 2
+gridPos:
+  w: 16
+  h: 9
+  y: 2
+fieldConfig:
+  defaults:
+    custom:
+      fillOpacity: 10
+      spanNulls: 3600000
+      showPoints: "never"
+    unit: "ms"
+    decimals: 2
+options:
+  legend: {displayMode: "list", placement: "bottom"}
+  tooltip: {mode: "single", sort: "none"}
+targets:
+  - refId: "A"
+    target: "groupByNode(stats.timers.openstack.api.$environment.$zone.*.*.*.*.upper, 6, 'avg')"
+title: "Endpoint response times"
+type: "timeseries"

@@ -1,0 +1,22 @@
+---
+order: 2
+gridPos:
+  w: 12
+  h: 8
+  y: 2
+fieldConfig:
+  defaults:
+    custom:
+      fillOpacity: 10
+      spanNulls: 3600000
+      showPoints: "never"
+options:
+  legend: {showLegend: false}
+  tooltip: {mode: "single", sort: "none"}
+  alertThreshold: true
+targets:
+  - refId: "A"
+    target: "alias(consolidateBy(sumSeries(exclude(stats.counters.openstack.api.$environment.$zone.*.*.*.failed.count, 'modelarts')), 'sum'), 'count')"
+title: "No response count"
+description: "Count of API requests with no response received during timeout 10s"
+type: "timeseries"
