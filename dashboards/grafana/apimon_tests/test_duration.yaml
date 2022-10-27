@@ -14,6 +14,8 @@ fieldConfig:
     custom:
       drawStyle: "points"
       pointSize: 4
+    unit: "ms"
+    decimals: 2
 targets:
   - format: time_series
     group: []

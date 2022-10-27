@@ -10,6 +10,8 @@ fieldConfig:
       fillOpacity: 10
       spanNulls: 3600000
       pointSize: 2
+    unit: "ms"
+    decimals: 2
 options:
   legend: {displayMode: "list", placement: "bottom"}
   tooltip: {mode: "single", sort: "none"}

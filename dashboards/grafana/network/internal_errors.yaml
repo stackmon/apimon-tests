@@ -7,10 +7,10 @@ gridPos:
   x: 18
   y: 5
 fieldConfig:
-      defaults:
-        custom:
-          drawStyle: "points"
-          pointSize: 6
+  defaults:
+    custom:
+      drawStyle: "points"
+      pointSize: 6
 options:
   legend: {displayMode: "list", placement: "bottom"}
   tooltip: {mode: "single", sort: "none"}

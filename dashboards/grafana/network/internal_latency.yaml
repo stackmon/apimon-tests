@@ -6,11 +6,13 @@ gridPos:
   h: 8
   y: 5
 fieldConfig:
-      defaults:
-        custom:
-          fillOpacity: 10
-          spanNulls: 3600000
-          showPoints: "never"
+  defaults:
+    custom:
+      fillOpacity: 10
+      spanNulls: 3600000
+      showPoints: "never"
+    unit: "ms"
+    decimals: 2
 options:
   legend: {calcs: ["lastNotNull"], displayMode: "table", placement: "right"}
   tooltip: {mode: "single", sort: "none"}
