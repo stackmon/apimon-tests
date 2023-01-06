@@ -37,7 +37,7 @@ Initially developed as part of the api-monitoring project, but separated for the
   ansible-galaxy role install -r requirements.yml
 ```
 
-6. Prepare clouds.yaml configuration. It must be located in either ~/.config/openstack/clouds.yaml or /etc/openstack/cluods.yaml, otherwise ansible will not be able to locate it:
+6. Prepare clouds.yaml configuration. It must be located in either ~/.config/openstack/clouds.yaml or /etc/openstack/clouds.yaml, otherwise ansible will not be able to locate it:
 
 ```
 clouds:
