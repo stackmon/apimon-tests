@@ -1,0 +1,105 @@
+---
+# Scenario to test bascic Server functions
+#
+- name: Scenario 5 - SCS Server
+  hosts: localhost
+  vars:
+    prefix: scenario5-
+  tasks:
+    - ansible.builtin.set_fact:
+        prefix: "{{ (prefix +
+            (lookup('env', 'TASK_EXECUTOR_JOB_ID') |
+            default([('%Y%m%d%H%M' | strftime), 99999999 | random | to_uuid | hash('md5')] | join('-'), true))) }}"
+    - ansible.builtin.set_fact:
+        image_name: "{{ (prefix + '-test_image_apimon') }}"
+
+    - block:
+
+        - name: List Images
+          openstack.cloud.image_info:
+
+        - name: Get single Image
+          openstack.cloud.image_info:
+            image: "{{ generic_image_name | default('Standard_Fedora_36_latest') }}"
+
+        - name: Create directory for images
+          ansible.builtin.file:
+            name: /tmp/ansible/images
+            state: directory
+            recurse: true
+
+        - name: Download cirros image
+          ansible.builtin.get_url:
+            url: https://download.cirros-cloud.net/0.6.0/cirros-0.6.0-x86_64-disk.img
+            dest: /tmp/ansible/images/cirros.img
+            validate_certs: false
+
+        - name: Upload cirros image
+          openstack.cloud.image:
+            name: "{{ image_name }}"
+            container_format: bare
+            disk_format: qcow2
+            state: present
+            min_disk: 1
+            timeout: 1200
+            is_protected: false
+            filename: /tmp/ansible/images/cirros.img
+          tags:
+            - "metric=image_upload"
+
+        - name: Create network
+          openstack.cloud.network:
+            name: "network-test"
+            external: false
+
+        - name: Create subnet
+          openstack.cloud.subnet:
+            state: present
+            network_name: "network-test"
+            name: net1subnet
+            cidr: 192.168.0.0/24
+            dns_nameservers:
+              - 8.8.8.7
+              - 8.8.8.8
+            host_routes:
+              - destination: 192.168.0.0/24
+                nexthop: 192.168.0.1
+
+
+        - name: create server instance
+          openstack.cloud.server:
+            name: "cirros-test"
+            flavor: "SCS-1L:1:5"
+            image: "{{ image_name }}"
+            network: "network-test"
+
+      always:
+        - name: remove an instance
+          openstack.cloud.server:
+            name: "{{ image_name }}"
+            state: absent
+
+        - openstack.cloud.subnet:
+            state: absent
+            name: net1subnet
+
+        - openstack.cloud.network:
+            state: absent
+            name: "network-test"
+
+        - name: Delete cirros image
+          openstack.cloud.image:
+            name: "{{ image_name }}"
+            state: absent
+          tags:
+            - "metric=image_delete"
+
+        - name: Verify image is deleted
+          openstack.cloud.image_info:
+            image: "{{ image_name }}"
+          register: image_state
+
+        - ansible.builtin.assert:
+            that:
+              - image_state.images is defined
+              - image_state.images|length == 0
