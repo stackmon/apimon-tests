@@ -6,7 +6,8 @@
   vars:
     prefix: scenario4-
   tasks:
-    - ansible.builtin.set_fact:
+    - name: Set facts
+      ansible.builtin.set_fact:
         prefix: "{{ (prefix +
             (lookup('env', 'TASK_EXECUTOR_JOB_ID') |
             default([('%Y%m%d%H%M' | strftime), 99999999 | random | to_uuid | hash('md5')] | join('-'), true))) }}"
@@ -61,7 +62,8 @@
             image: "{{ image_name }}"
           register: image_state
 
-        - ansible.builtin.assert:
+        - name: Assert
+          ansible.builtin.assert:
             that:
               - image_state.images is defined
               - image_state.images|length == 0
