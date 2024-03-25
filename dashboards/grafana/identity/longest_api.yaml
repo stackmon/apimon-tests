@@ -9,6 +9,6 @@ options:
   tooltip: {"mode": "single", "sort": "none"}
 targets:
   - refId: "A"
-    target: "maximumAbove(groupByNodes(removeEmptySeries(stats.timers.openstack.api.$environment.$zone.identity.*.*.*.upper), 'sum', 8, 7, 9), 1000)"
+    target: "maximumAbove(groupByNodes(removeEmptySeries(stats.timers.openstack.api.$environment.$zone.identity.*.*.upper), 'sum', 8, 7, 9), 1000)"
 title: "Highest API calls duration"
 type: "timeseries"
