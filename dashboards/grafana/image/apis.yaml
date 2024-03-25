@@ -10,6 +10,8 @@ fieldConfig:
       fillOpacity: 10
       spanNulls: 3600000
       showPoints: "never"
+    unit: "ms"
+    decimals: 2
 options:
   legend: {calcs: ["min", "mean", "max"], displayMode: "table", placement: "right"}
   tooltip: {mode: "single", sort: "none"}
